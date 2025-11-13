@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dreamy Tales - Simple Test</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 50%, #9b88b4 100%);
+            color: white;
+            text-align: center;
+            padding: 50px 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #f4d03f, #9b88b4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .story-card {
+            background: rgba(254, 249, 231, 0.95);
+            color: #1a1a2e;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .story-card:hover {
+            transform: translateY(-5px);
+        }
+        .story-card h3 {
+            color: #1a1a2e;
+            margin: 0 0 10px 0;
+        }
+        .story-card p {
+            color: #666;
+            margin: 0;
+        }
+        .button {
+            background: #f4d03f;
+            color: #1a1a2e;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        .button:hover {
+            background: #ffb366;
+            transform: translateY(-2px);
+        }
+        .language-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #f4d03f;
+            color: #1a1a2e;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+        .feature {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <button class="language-toggle" onclick="toggleLanguage()">العربية</button>
+    
+    <div class="container">
+        <h1>🌙 Dreamy Tales</h1>
+        <h2 id="subtitle">Magical Bedtime Stories in Arabic & English</h2>
+        
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">📚</div>
+                <h3 id="feature1-title">Bilingual Stories</h3>
+                <p id="feature1-desc">Read in Arabic and English with side-by-side text</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🎵</div>
+                <h3 id="feature2-title">Audio Narration</h3>
+                <p id="feature2-desc">Professional narration with text highlighting</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">⭐</div>
+                <h3 id="feature3-title">Premium Content</h3>
+                <p id="feature3-desc">Exclusive stories and enhanced features</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🏆</div>
+                <h3 id="feature4-title">Reading Rewards</h3>
+                <p id="feature4-desc">Track progress and earn badges</p>
+            </div>
+        </div>
+        
+        <h3 id="stories-title">Available Stories</h3>
+        
+        <div class="story-card" onclick="readStory('cinderella')">
+            <h3 id="cinderella-title">Cinderella</h3>
+            <p id="cinderella-desc">A kind girl with a heart full of hope overcomes challenges</p>
+            <small>⏱️ 7 min • 👶 4-8 years • 🆓 Free</small>
+        </div>
+        
+        <div class="story-card" onclick="readStory('three-pigs')">
+            <h3 id="threepigs-title">Three Little Pigs</h3>
+            <p id="threepigs-desc">Three pigs build different houses and learn important lessons</p>
+            <small>⏱️ 6 min • 👶 3-7 years • 🆓 Free</small>
+        </div>
+        
+        <div class="story-card" onclick="readStory('sleeping-beauty')">
+            <h3 id="sleeping-title">Sleeping Beauty</h3>
+            <p id="sleeping-desc">A princess under a sleeping spell awakened by true love</p>
+            <small>⏱️ 12 min • 👶 5-9 years • ⭐ Premium</small>
+        </div>
+        
+        <div style="margin-top: 40px;">
+            <a href="reading.html" class="button">📖 Start Reading</a>
+            <a href="premium.html" class="button">⭐ Go Premium</a>
+        </div>
+    </div>
+    
+    <script>
+        let currentLang = 'en';
+        
+        const translations = {
+            en: {
+                subtitle: "Magical Bedtime Stories in Arabic & English",
+                feature1Title: "Bilingual Stories",
+                feature1Desc: "Read in Arabic and English with side-by-side text",
+                feature2Title: "Audio Narration", 
+                feature2Desc: "Professional narration with text highlighting",
+                feature3Title: "Premium Content",
+                feature3Desc: "Exclusive stories and enhanced features",
+                feature4Title: "Reading Rewards",
+                feature4Desc: "Track progress and earn badges",
+                storiesTitle: "Available Stories",
+                cinderellaTitle: "Cinderella",
+                cinderellaDesc: "A kind girl with a heart full of hope overcomes challenges",
+                threepigsTitle: "Three Little Pigs", 
+                threepigsDesc: "Three pigs build different houses and learn important lessons",
+                sleepingTitle: "Sleeping Beauty",
+                sleepingDesc: "A princess under a sleeping spell awakened by true love"
+            },
+            ar: {
+                subtitle: "قصص سحرية للنوم باللغتين العربية والإنجليزية",
+                feature1Title: "قصص ثنائية اللغة",
+                feature1Desc: "اقرأ بالعربية والإنجليزية مع النص جنباً إلى جنب",
+                feature2Title: "السرد الصوتي",
+                feature2Desc: "السرد الاحترافي مع تمييز النص",
+                feature3Title: "محتوى مميز",
+                feature3Desc: "قصص حصرية وميزات محسّنة",
+                feature4Title: "مكافآت القراءة",
+                feature4Desc: "تتبع التقدم واكسب الشارات",
+                storiesTitle: "القصص المتاحة",
+                cinderellaTitle: "سندريلا",
+                cinderellaDesc: "فتاة لطيفة مليئة بالأمل تتغلب على التحديات",
+                threepigsTitle: "الخنازير الثلاثة",
+                threepigsDesc: "ثلاثة خنازير يبنون بيوتاً مختلفة ويتعلمون دروساً مهمة",
+                sleepingTitle: "الأميرة النائمة",
+                sleepingDesc: "أميرة تحت تأثير نوم سحري تستيقظ بواسطة الحب الحقيقي"
+            }
+        };
+        
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'ar' : 'en';
+            updateLanguage();
+            
+            const btn = document.querySelector('.language-toggle');
+            btn.textContent = currentLang === 'en' ? 'العربية' : 'English';
+            
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+        }
+        
+        function updateLanguage() {
+            const t = translations[currentLang];
+            
+            document.getElementById('subtitle').textContent = t.subtitle;
+            document.getElementById('feature1-title').textContent = t.feature1Title;
+            document.getElementById('feature1-desc').textContent = t.feature1Desc;
+            document.getElementById('feature2-title').textContent = t.feature2Title;
+            document.getElementById('feature2-desc').textContent = t.feature2Desc;
+            document.getElementById('feature3-title').textContent = t.feature3Title;
+            document.getElementById('feature3-desc').textContent = t.feature3Desc;
+            document.getElementById('feature4-title').textContent = t.feature4Title;
+            document.getElementById('feature4-desc').textContent = t.feature4Desc;
+            document.getElementById('stories-title').textContent = t.storiesTitle;
+            document.getElementById('cinderella-title').textContent = t.cinderellaTitle;
+            document.getElementById('cinderella-desc').textContent = t.cinderellaDesc;
+            document.getElementById('threepigs-title').textContent = t.threepigsTitle;
+            document.getElementById('threepigs-desc').textContent = t.threepigsDesc;
+            document.getElementById('sleeping-title').textContent = t.sleepingTitle;
+            document.getElementById('sleeping-desc').textContent = t.sleepingDesc;
+        }
+        
+        function readStory(storyId) {
+            localStorage.setItem('currentStory', storyId);
+            window.location.href = 'reading.html';
+        }
+        
+        // Initialize
+        updateLanguage();
+    </script>
+</body>
+</html>

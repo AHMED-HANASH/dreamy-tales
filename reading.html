@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Story Reader - Dreamy Tales</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700&family=Fredoka+One:wght@400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --deep-night: #1a1a2e;
+            --soft-lavender: #9b88b4;
+            --warm-gold: #f4d03f;
+            --cream-white: #fef9e7;
+            --gentle-pink: #f8c8dc;
+            --sage-green: #a8c090;
+            --soft-orange: #ffb366;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--deep-night) 0%, #2d1b69 50%, var(--soft-lavender) 100%);
+            min-height: 100vh;
+            color: var(--cream-white);
+        }
+        
+        .arabic-text {
+            font-family: 'Amiri', serif;
+            line-height: 1.8;
+            font-size: 1.1em;
+        }
+        
+        .english-display {
+            font-family: 'Fredoka One', cursive;
+        }
+        
+        .story-reader {
+            background: rgba(254, 249, 231, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .story-text {
+            color: var(--deep-night);
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+        
+        .story-text.arabic {
+            text-align: right;
+            direction: rtl;
+        }
+        
+        .story-text.english {
+            text-align: left;
+            direction: ltr;
+        }
+        
+        .control-btn {
+            background: var(--warm-gold);
+            color: var(--deep-night);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .control-btn:hover {
+            background: var(--soft-orange);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(244, 208, 63, 0.3);
+        }
+        
+        .control-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .progress-bar {
+            background: rgba(155, 136, 180, 0.3);
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, var(--warm-gold), var(--soft-orange));
+            height: 100%;
+            transition: width 0.3s ease;
+            border-radius: 3px;
+        }
+        
+        .settings-panel {
+            background: rgba(26, 26, 46, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 10px;
+            min-width: 250px;
+            z-index: 100;
+        }
+        
+        .font-size-slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(155, 136, 180, 0.3);
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--warm-gold);
+            cursor: pointer;
+        }
+        
+        .font-size-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--warm-gold);
+            cursor: pointer;
+            border: none;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(155, 136, 180, 0.3);
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--warm-gold);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        .night-mode {
+            background: rgba(26, 26, 46, 0.95) !important;
+            color: var(--cream-white) !important;
+        }
+        
+        .night-mode .story-text {
+            color: var(--cream-white) !important;
+        }
+        
+        .highlight-text {
+            background: linear-gradient(90deg, rgba(244, 208, 63, 0.3), rgba(255, 179, 102, 0.3));
+            padding: 2px 4px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .page-indicator {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .page-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(155, 136, 180, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .page-dot.active {
+            background: var(--warm-gold);
+            transform: scale(1.2);
+        }
+        
+        .page-dot:hover {
+            background: var(--soft-orange);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        .rtl {
+            direction: rtl;
+        }
+        
+        .rtl .story-text {
+            text-align: right;
+        }
+        
+        .rtl .settings-panel {
+            right: auto;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 bg-black bg-opacity-30 backdrop-blur-md">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <button onclick="window.location.href='index.html'" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                        <span data-translate="back-to-library">Back to Library</span>
+                    </button>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="language-toggle" class="px-4 py-2 bg-yellow-400 text-black rounded-lg font-medium hover:bg-yellow-300 transition-colors">
+                        العربية
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Story Reader -->
+    <div class="container mx-auto px-4 pt-24 pb-12">
+        <div class="max-w-6xl mx-auto">
+            <!-- Story Header -->
+            <div class="text-center mb-8">
+                <h1 id="story-title" class="text-4xl md:text-5xl font-bold mb-4 gradient-text english-display">
+                    <!-- Story title will be loaded here -->
+                </h1>
+                <div class="progress-bar mb-4">
+                    <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+                </div>
+                <div class="flex justify-center items-center space-x-4 text-sm text-gray-400">
+                    <span id="story-category"></span>
+                    <span>•</span>
+                    <span id="story-duration"></span>
+                    <span>•</span>
+                    <span id="story-age"></span>
+                </div>
+            </div>
+            
+            <!-- Reading Controls -->
+            <div class="flex flex-wrap justify-center items-center gap-4 mb-8">
+                <button id="prev-btn" class="control-btn" disabled>
+                    <span data-translate="previous">← Previous</span>
+                </button>
+                <div class="page-indicator" id="page-indicator">
+                    <!-- Page dots will be generated here -->
+                </div>
+                <button id="next-btn" class="control-btn">
+                    <span data-translate="next">Next →</span>
+                </button>
+                <div class="relative">
+                    <button id="settings-btn" class="control-btn">
+                        <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        <span data-translate="settings">Settings</span>
+                    </button>
+                    
+                    <!-- Settings Panel -->
+                    <div id="settings-panel" class="settings-panel hidden">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2" data-translate="font-size">Font Size</label>
+                                <input type="range" id="font-size-slider" class="font-size-slider" min="14" max="24" value="18">
+                                <div class="flex justify-between text-xs mt-1">
+                                    <span>A</span>
+                                    <span>A</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-between items-center">
+                                <label class="text-sm font-medium" data-translate="night-mode">Night Mode</label>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="night-mode-toggle">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="flex justify-between items-center">
+                                <label class="text-sm font-medium" data-translate="auto-scroll">Auto Scroll</label>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="auto-scroll-toggle">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="flex justify-between items-center">
+                                <label class="text-sm font-medium" data-translate="audio-narration">Audio Narration</label>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="audio-toggle">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Story Content -->
+            <div id="story-reader" class="story-reader p-8 mb-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- English Text -->
+                    <div id="english-section" class="story-text english">
+                        <h3 class="text-2xl font-bold mb-4 text-purple-600 english-display">English</h3>
+                        <div id="english-content">
+                            <!-- English story content will be loaded here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Arabic Text -->
+                    <div id="arabic-section" class="story-text arabic">
+                        <h3 class="text-2xl font-bold mb-4 text-purple-600 arabic-text">العربية</h3>
+                        <div id="arabic-content">
+                            <!-- Arabic story content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Story Image -->
+                <div class="mt-8 text-center">
+                    <img id="story-image" src="" alt="Story illustration" class="mx-auto max-w-full h-auto rounded-xl shadow-lg max-h-96 object-cover">
+                </div>
+            </div>
+            
+            <!-- Story Moral -->
+            <div id="story-moral" class="text-center p-6 rounded-xl bg-white bg-opacity-10 backdrop-blur-md mb-8">
+                <h3 class="text-xl font-bold mb-2 gradient-text" data-translate="story-moral">Story Moral</h3>
+                <p id="moral-text" class="text-lg italic">
+                    <!-- Moral will be loaded here -->
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="main.js"></script>
+    <script>
+        // Reading page specific functionality
+        let currentPage = 0;
+        let totalPages = 0;
+        let currentStoryData = null;
+        let autoScrollInterval = null;
+        let audioContext = null;
+        
+        // Additional translations for reading page
+        const readingTranslations = {
+            'back-to-library': {
+                en: 'Back to Library',
+                ar: 'العودة إلى المكتبة'
+            },
+            'previous': {
+                en: '← Previous',
+                ar: '← السابق'
+            },
+            'next': {
+                en: 'Next →',
+                ar: 'التالي →'
+            },
+            'settings': {
+                en: 'Settings',
+                ar: 'الإعدادات'
+            },
+            'font-size': {
+                en: 'Font Size',
+                ar: 'حجم الخط'
+            },
+            'night-mode': {
+                en: 'Night Mode',
+                ar: 'الوضع الليلي'
+            },
+            'auto-scroll': {
+                en: 'Auto Scroll',
+                ar: 'التمرير التلقائي'
+            },
+            'audio-narration': {
+                en: 'Audio Narration',
+                ar: 'السرد الصوتي'
+            },
+            'story-moral': {
+                en: 'Story Moral',
+                ar: 'الحكمة'
+            }
+        };
+        
+        // Merge with main translations
+        Object.assign(translations, readingTranslations);
+        
+        // Sample story content (in a real app, this would come from a database)
+        const sampleStoryContent = {
+            cinderella: {
+                title: { en: 'Cinderella', ar: 'سندريلا' },
+                category: 'Classic Tale',
+                duration: '7 min',
+                age: '4-8 years',
+                moral: {
+                    en: 'Kindness and hope always win in the end.',
+                    ar: 'اللطف والأمل دائماً ينتصران في النهاية.'
+                },
+                pages: [
+                    {
+                        en: {
+                            text: "Once upon a time, in a land far away, there lived a beautiful girl named Cinderella. She had golden hair that shone like the sun and a heart as pure as gold. Cinderella lived with her stepmother and two stepsisters in a grand but lonely house.",
+                            image: "https://kimi-web-img.moonshot.cn/img/cdn.mos.cms.futurecdn.net/d7a02f11a6de99fff2d1a8c38dc692710568eb60.jpg"
+                        },
+                        ar: {
+                            text: "في قديم الزمان، في أرض بعيدة، كانت تعيش فتاة جميلة تُدعى سندريلا. كانت لديها شعر ذهبي يتلألأ مثل الشمس وقلب نقي مثل الذهب. كانت سندريلا تعيش مع زوجة أبيها وأختيها غير الشقيقتين في منزل كبير لكنه وحيد.",
+                            image: "https://kimi-web-img.moonshot.cn/img/cdn.mos.cms.futurecdn.net/d7a02f11a6de99fff2d1a8c38dc692710568eb60.jpg"
+                        }
+                    },
+                    {
+                        en: {
+                            text: "Cinderella's stepmother was cruel and made her do all the housework. She scrubbed the floors, cleaned the fireplaces, and cooked the meals. Her stepsisters were even meaner, calling her names and making fun of her simple clothes.",
+                            image: "https://kimi-web-img.moonshot.cn/img/img.freepik.com/87f9e29cb4c6f8fae61db3e6b9cdf0eb47164a01.jpg"
+                        },
+                        ar: {
+                            text: "كانت زوجة أبي سندريلا قاسية وكانت تجعلها تفعل كل أعمال المنزل. كانت تفرك الأرضيات، وتنظف المداخن، وتطبخ الطعام. أما أخواتها غير الشقيقتين فكانتا أكثر قسوة، يسخران منها ويضحكان على ملابسها البسيطة.",
+                            image: "https://kimi-web-img.moonshot.cn/img/img.freepik.com/87f9e29cb4c6f8fae61db3e6b9cdf0eb47164a01.jpg"
+                        }
+                    },
+                    {
+                        en: {
+                            text: "One day, the king announced a royal ball for the prince to find a bride. Every maiden in the kingdom was invited. Cinderella's stepsisters were excited about going, but they wouldn't let Cinderella attend.",
+                            image: "https://kimi-web-img.moonshot.cn/img/threebooksanight.com/b3aebfb49e30cf573288da92b8e7b8fad83765df.jpg"
+                        },
+                        ar: {
+                            text: "في أحد الأيام، أعلن الملك عن حفل ملكي للأمير ليجد عروساً. تمت دعوة كل فتاة في المملكة. كانت أخوات سندريلا متحمسات للذهاب، لكنهن لم يسمحن لسندريلا بالحضور.",
+                            image: "https://kimi-web-img.moonshot.cn/img/threebooksanight.com/b3aebfb49e30cf573288da92b8e7b8fad83765df.jpg"
+                        }
+                    },
+                    {
+                        en: {
+                            text: "As Cinderella sat crying in the garden, her fairy godmother appeared in a shower of sparkles. 'Don't cry, my dear,' she said kindly. 'You shall go to the ball!' With a wave of her magic wand, Cinderella's rags turned into a beautiful gown.",
+                            image: "https://kimi-web-img.moonshot.cn/img/cdn4.volusion.store/f0aa1b2ad9999d517ccb63811976d07cab3313bf.jpg"
+                        },
+                        ar: {
+                            text: "بينما كانت سندريلا تجلس تبكي في الحديقة، ظهرت أمها الروحية في عاصفة من الشرر. 'لا تبكي يا عزيزتي،' قالت بلطف. 'سوف تذهبين إلى الحفل!' بحركة من عصاها السحرية، تحولت ثياب سندريلا الرثة إلى فستان جميل.",
+                            image: "https://kimi-web-img.moonshot.cn/img/cdn4.volusion.store/f0aa1b2ad9999d517ccb63811976d07cab3313bf.jpg"
+                        }
+                    },
+                    {
+                        en: {
+                            text: "The fairy godmother turned a pumpkin into a golden carriage and mice into elegant horses. 'Remember,' she warned, 'the magic will end at midnight!' Cinderella promised to return before the clock struck twelve and went to the ball.",
+                            image: "https://kimi-web-img.moonshot.cn/img/s.turbifycdn.com/5fd6b47bc075777c2e512113720a2d4c8d4f622c.gif"
+                        },
+                        ar: {
+                            text: "حولت أمها الروحية القرعة إلى عربة ذهبية وتحولت الفئران إلى خيول أنيقة. 'تذكري،' حذرت، 'سينتهي السحر عند منتصف الليل!' وعدت سندريلا بالعودة قبل أن يضرب الساعة الثانية عشرة وذهبت إلى الحفل.",
+                            image: "https://kimi-web-img.moonshot.cn/img/s.turbifycdn.com/5fd6b47bc075777c2e512113720a2d4c8d4f622c.gif"
+                        }
+                    }
+                ]
+            }
+        };
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStoryForReading();
+            setupReadingControls();
+        });
+        
+        function loadStoryForReading() {
+            const storyId = localStorage.getItem('currentStory') || 'cinderella';
+            currentStoryData = sampleStoryContent[storyId];
+            
+            if (!currentStoryData) {
+                // Fallback to Cinderella if story not found
+                currentStoryData = sampleStoryContent.cinderella;
+            }
+            
+            totalPages = currentStoryData.pages.length;
+            
+            // Update story header
+            document.getElementById('story-title').textContent = currentStoryData.title[currentLanguage];
+            document.getElementById('story-category').textContent = currentStoryData.category;
+            document.getElementById('story-duration').textContent = currentStoryData.duration;
+            document.getElementById('story-age').textContent = currentStoryData.age;
+            document.getElementById('moral-text').textContent = currentStoryData.moral[currentLanguage];
+            
+            // Create page indicators
+            createPageIndicators();
+            
+            // Load first page
+            loadPage(0);
+            
+            // Update progress
+            updateProgress();
+        }
+        
+        function createPageIndicators() {
+            const indicator = document.getElementById('page-indicator');
+            indicator.innerHTML = '';
+            
+            for (let i = 0; i < totalPages; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'page-dot';
+                if (i === 0) dot.classList.add('active');
+                dot.onclick = () => loadPage(i);
+                indicator.appendChild(dot);
+            }
+        }
+        
+        function loadPage(pageIndex) {
+            if (pageIndex < 0 || pageIndex >= totalPages) return;
+            
+            currentPage = pageIndex;
+            const page = currentStoryData.pages[pageIndex];
+            
+            // Update content
+            document.getElementById('english-content').innerHTML = `<p class="fade-in">${page.en.text}</p>`;
+            document.getElementById('arabic-content').innerHTML = `<p class="fade-in arabic-text">${page.ar.text}</p>`;
+            document.getElementById('story-image').src = page.en.image;
+            
+            // Update page indicators
+            document.querySelectorAll('.page-dot').forEach((dot, index) => {
+                dot.classList.toggle('active', index === pageIndex);
+            });
+            
+            // Update navigation buttons
+            document.getElementById('prev-btn').disabled = pageIndex === 0;
+            document.getElementById('next-btn').disabled = pageIndex === totalPages - 1;
+            
+            // Update progress
+            updateProgress();
+            
+            // Auto-scroll if enabled
+            if (document.getElementById('auto-scroll-toggle').checked) {
+                startAutoScroll();
+            }
+            
+            // Text highlighting if audio is enabled
+            if (document.getElementById('audio-toggle').checked) {
+                startTextHighlighting();
+            }
+        }
+        
+        function setupReadingControls() {
+            // Navigation buttons
+            document.getElementById('prev-btn').addEventListener('click', () => {
+                if (currentPage > 0) {
+                    loadPage(currentPage - 1);
+                }
+            });
+            
+            document.getElementById('next-btn').addEventListener('click', () => {
+                if (currentPage < totalPages - 1) {
+                    loadPage(currentPage + 1);
+                }
+            });
+            
+            // Settings panel
+            document.getElementById('settings-btn').addEventListener('click', () => {
+                const panel = document.getElementById('settings-panel');
+                panel.classList.toggle('hidden');
+            });
+            
+            // Font size slider
+            document.getElementById('font-size-slider').addEventListener('input', (e) => {
+                const size = e.target.value + 'px';
+                document.querySelectorAll('.story-text p').forEach(p => {
+                    p.style.fontSize = size;
+                });
+            });
+            
+            // Night mode toggle
+            document.getElementById('night-mode-toggle').addEventListener('change', (e) => {
+                const reader = document.getElementById('story-reader');
+                if (e.target.checked) {
+                    reader.classList.add('night-mode');
+                } else {
+                    reader.classList.remove('night-mode');
+                }
+            });
+            
+            // Auto-scroll toggle
+            document.getElementById('auto-scroll-toggle').addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    startAutoScroll();
+                } else {
+                    stopAutoScroll();
+                }
+            });
+            
+            // Audio toggle
+            document.getElementById('audio-toggle').addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    startTextHighlighting();
+                } else {
+                    stopTextHighlighting();
+                }
+            });
+            
+            // Close settings when clicking outside
+            document.addEventListener('click', (e) => {
+                const settingsBtn = document.getElementById('settings-btn');
+                const settingsPanel = document.getElementById('settings-panel');
+                
+                if (!settingsBtn.contains(e.target) && !settingsPanel.contains(e.target)) {
+                    settingsPanel.classList.add('hidden');
+                }
+            });
+        }
+        
+        function updateProgress() {
+            const progress = ((currentPage + 1) / totalPages) * 100;
+            document.getElementById('progress-fill').style.width = progress + '%';
+        }
+        
+        function startAutoScroll() {
+            stopAutoScroll();
+            autoScrollInterval = setInterval(() => {
+                window.scrollBy(0, 1);
+            }, 50);
+        }
+        
+        function stopAutoScroll() {
+            if (autoScrollInterval) {
+                clearInterval(autoScrollInterval);
+                autoScrollInterval = null;
+            }
+        }
+        
+        function startTextHighlighting() {
+            // Simulate text highlighting (in a real app, this would sync with actual audio)
+            const paragraphs = document.querySelectorAll('.story-text p');
+            let highlightIndex = 0;
+            
+            function highlightNext() {
+                // Remove previous highlights
+                paragraphs.forEach(p => p.classList.remove('highlight-text'));
+                
+                // Highlight current paragraph
+                if (paragraphs[highlightIndex]) {
+                    paragraphs[highlightIndex].classList.add('highlight-text');
+                    highlightIndex = (highlightIndex + 1) % paragraphs.length;
+                }
+            }
+            
+            // Highlight every 3 seconds
+            highlightNext();
+            window.highlightInterval = setInterval(highlightNext, 3000);
+        }
+        
+        function stopTextHighlighting() {
+            if (window.highlightInterval) {
+                clearInterval(window.highlightInterval);
+                window.highlightInterval = null;
+            }
+            
+            // Remove all highlights
+            document.querySelectorAll('.story-text p').forEach(p => {
+                p.classList.remove('highlight-text');
+            });
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft' && currentPage > 0) {
+                loadPage(currentPage - 1);
+            } else if (e.key === 'ArrowRight' && currentPage < totalPages - 1) {
+                loadPage(currentPage + 1);
+            }
+        });
+        
+        // Save reading progress when leaving page
+        window.addEventListener('beforeunload', () => {
+            const storyId = localStorage.getItem('currentStory');
+            if (storyId) {
+                const progress = {
+                    storyId: storyId,
+                    currentPage: currentPage,
+                    totalPages: totalPages,
+                    completed: currentPage === totalPages - 1,
+                    timestamp: Date.now()
+                };
+                
+                let readingProgress = JSON.parse(localStorage.getItem('readingProgress')) || {};
+                readingProgress[storyId] = progress;
+                localStorage.setItem('readingProgress', JSON.stringify(readingProgress));
+                
+                // Update reading streak
+                if (progress.completed) {
+                    let streak = parseInt(localStorage.getItem('readingStreak')) || 0;
+                    streak++;
+                    localStorage.setItem('readingStreak', streak.toString());
+                }
+            }
+        });
+    </script>
+</body>
+</html>

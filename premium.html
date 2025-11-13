@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Stories - Dreamy Tales</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700&family=Fredoka+One:wght@400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --deep-night: #1a1a2e;
+            --soft-lavender: #9b88b4;
+            --warm-gold: #f4d03f;
+            --cream-white: #fef9e7;
+            --gentle-pink: #f8c8dc;
+            --sage-green: #a8c090;
+            --soft-orange: #ffb366;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--deep-night) 0%, #2d1b69 50%, var(--soft-lavender) 100%);
+            min-height: 100vh;
+            color: var(--cream-white);
+        }
+        
+        .arabic-text {
+            font-family: 'Amiri', serif;
+        }
+        
+        .english-display {
+            font-family: 'Fredoka One', cursive;
+        }
+        
+        .premium-card {
+            background: rgba(254, 249, 231, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .premium-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(244, 208, 63, 0.3);
+            border-color: var(--warm-gold);
+        }
+        
+        .pricing-card {
+            background: rgba(254, 249, 231, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pricing-card.featured {
+            border: 3px solid var(--warm-gold);
+            transform: scale(1.05);
+        }
+        
+        .pricing-card.featured::before {
+            content: 'MOST POPULAR';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--warm-gold);
+            color: var(--deep-night);
+            text-align: center;
+            padding: 8px;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        
+        .premium-story-card {
+            background: rgba(254, 249, 231, 0.9);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .premium-story-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(155, 136, 180, 0.2);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(45deg, var(--warm-gold), var(--soft-lavender));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .glow-effect {
+            box-shadow: 0 0 20px rgba(244, 208, 63, 0.4);
+        }
+        
+        .parental-gate {
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .math-question {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--warm-gold);
+            margin: 20px 0;
+        }
+        
+        .math-input {
+            width: 100px;
+            padding: 10px;
+            border-radius: 10px;
+            border: 2px solid var(--warm-gold);
+            text-align: center;
+            font-size: 1.2rem;
+            background: rgba(254, 249, 231, 0.9);
+            color: var(--deep-night);
+        }
+        
+        .splide__slide img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 15px;
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--warm-gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 15px;
+            color: var(--deep-night);
+        }
+        
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: rgba(155, 136, 180, 0.1);
+            border-radius: 10px;
+        }
+        
+        .benefit-icon {
+            width: 30px;
+            height: 30px;
+            background: var(--sage-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: white;
+            font-size: 0.8rem;
+        }
+        
+        .rtl {
+            direction: rtl;
+        }
+        
+        .rtl .benefit-icon {
+            margin-right: 0;
+            margin-left: 15px;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 bg-black bg-opacity-30 backdrop-blur-md">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <button onclick="window.location.href='index.html'" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                        <span data-translate="back-to-library">Back to Library</span>
+                    </button>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="language-toggle" class="px-4 py-2 bg-yellow-400 text-black rounded-lg font-medium hover:bg-yellow-300 transition-colors">
+                        العربية
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="pt-24 pb-12">
+        <div class="container mx-auto px-4 text-center">
+            <div class="max-w-4xl mx-auto">
+                <h1 class="text-5xl md:text-6xl font-bold mb-6 gradient-text english-display floating" data-translate="premium-stories">
+                    Premium Stories
+                </h1>
+                <p class="text-xl md:text-2xl mb-8 opacity-90" data-translate="premium-subtitle">
+                    Unlock magical adventures and exclusive content
+                </p>
+                <div class="flex justify-center items-center space-x-2 mb-8">
+                    <div class="feature-icon">⭐</div>
+                    <div class="feature-icon">📚</div>
+                    <div class="feature-icon">🎭</div>
+                    <div class="feature-icon">✨</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Premium Stories Preview -->
+    <section class="py-12">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 gradient-text" data-translate="featured-stories">
+                Featured Premium Stories
+            </h2>
+            
+            <!-- Stories Carousel -->
+            <div class="splide mb-12" id="premium-carousel">
+                <div class="splide__track">
+                    <ul class="splide__list">
+                        <li class="splide__slide">
+                            <div class="premium-story-card">
+                                <img src="https://kimi-web-img.moonshot.cn/img/thumbs.dreamstime.com/a10787b4cb88a0eba9e532fad2e9f0724bf8c5b3.jpg" alt="Sleeping Beauty">
+                                <div class="p-6">
+                                    <h3 class="text-xl font-bold mb-2 text-gray-800">Sleeping Beauty</h3>
+                                    <p class="text-gray-600 mb-4">A princess under a sleeping spell is awakened by true love after 100 years.</p>
+                                    <div class="flex justify-between items-center text-sm text-gray-500">
+                                        <span>12 min read</span>
+                                        <span class="bg-yellow-400 text-black px-2 py-1 rounded-full text-xs font-bold">PREMIUM</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="splide__slide">
+                            <div class="premium-story-card">
+                                <img src="https://kimi-web-img.moonshot.cn/img/alldonemonkey.com/19c895ff0fbd6cb0f377d13123d1ce46f952c3fe.jpg" alt="Aladdin">
+                                <div class="p-6">
+                                    <h3 class="text-xl font-bold mb-2 text-gray-800">Aladdin and the Magic Lamp</h3>
+                                    <p class="text-gray-600 mb-4">A poor boy finds a magical lamp that changes his life forever.</p>
+                                    <div class="flex justify-between items-center text-sm text-gray-500">
+                                        <span>15 min read</span>
+                                        <span class="bg-yellow-400 text-black px-2 py-1 rounded-full text-xs font-bold">PREMIUM</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="splide__slide">
+                            <div class="premium-story-card">
+                                <img src="https://kimi-web-img.moonshot.cn/img/img.freepik.com/d58f6d0a7ac9aae13fbe16aaf1c2749470368e8c.jpg" alt="Adventure Stories">
+                                <div class="p-6">
+                                    <h3 class="text-xl font-bold mb-2 text-gray-800">Magical Adventures</h3>
+                                    <p class="text-gray-600 mb-4">Explore enchanted worlds with brave heroes and magical creatures.</p>
+                                    <div class="flex justify-between items-center text-sm text-gray-500">
+                                        <span>Collection</span>
+                                        <span class="bg-yellow-400 text-black px-2 py-1 rounded-full text-xs font-bold">PREMIUM</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Pricing Plans -->
+    <section class="py-12 bg-black bg-opacity-20">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 gradient-text" data-translate="choose-plan">
+                Choose Your Plan
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <!-- Monthly Plan -->
+                <div class="pricing-card p-8">
+                    <div class="text-center mb-6">
+                        <h3 class="text-2xl font-bold mb-2 text-gray-800" data-translate="monthly-plan">Monthly</h3>
+                        <div class="text-4xl font-bold text-purple-600 mb-2">$4.99</div>
+                        <p class="text-gray-600" data-translate="per-month">per month</p>
+                    </div>
+                    <div class="space-y-3 mb-8">
+                        <div class="benefit-item">
+                            <div class="benefit-icon">✓</div>
+                            <span class="text-gray-700" data-translate="all-premium-stories">All Premium Stories</span>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">✓</div>
+                            <span class="text-gray-700" data-translate="offline-reading">Offline Reading</span>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">✓</div>
+                            <span class="text-gray-700" data-translate="audio-narration">Audio Narration</span>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">✓</div>
+                            <span class="text-gray-700" data-translate="new-stories-monthly">New Stories Monthly</span>
+                        </div>
+                    </div>
+                    <button onclick="showParentalGate('monthly')" class="w-full py-3 bg-purple-600 text-white rounded-lg font-bold hover:bg-purple-700 transition-colors">
+                        <span data-translate="choose-monthly">Choose Monthly</span>
+                    </button>
+                </div>
+                
+                <!-- Yearly Plan (Featured) -->
+                <div class="pricing-card featured p-8 pt-16">
+                    <div class="text-center mb-6">
+                        <h3 class="text-2xl font-bold mb-2 text-gray-800" data-translate="yearly-plan">Yearly</h3>
+                        <div class="text-4xl font-bold text-purple-600 mb-2">$49.99</div>
+                        <p class="text-gray-600" data-translate="per-year">per year</p>
+                        <div class="text-sm text-green-600 font-bold mt-2" data-translate="save-17">Save 17%!</div>
+                    </div>
+                    <div class="space-y-3 mb-8">
+                        <div class="benefit-item">
+                            <div class="benefit-icon">✓</div>
+                            <span class="text-gray-700" data-translate="all-premium-stories">All Premium Stories</span>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">✓</div>
+                            <span class="text-gray-700" data-translate="offline-reading">Offline Reading</span>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">✓</div>
+                            <span class="text-gray-700" data-translate="audio-narration">Audio Narration</span>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">✓</div>
+                            <span class="text-gray-700" data-translate="new-stories-monthly">New Stories Monthly</span>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">✓</div>
+                            <span class="text-gray-700" data-translate="exclusive-content">Exclusive Content</span>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">✓</div>
+                            <span class="text-gray-700" data-translate="priority-support">Priority Support</span>
+                        </div>
+                    </div>
+                    <button onclick="showParentalGate('yearly')" class="w-full py-3 bg-yellow-400 text-black rounded-lg font-bold hover:bg-yellow-300 transition-colors glow-effect">
+                        <span data-translate="choose-yearly">Choose Yearly</span>
+                    </button>
+                </div>
+                
+                <!-- Lifetime Plan -->
+                <div class="pricing-card p-8">
+                    <div class="text-center mb-6">
+                        <h3 class="text-2xl font-bold mb-2 text-gray-800" data-translate="lifetime-plan">Lifetime</h3>
+                        <div class="text-4xl font-bold text-purple-600 mb-2">$99.99</div>
+                        <p class="text-gray-600" data-translate="one-time-payment">one-time payment</p>
+                    </div>
+                    <div class="space-y-3 mb-8">
+                        <div class="benefit-item">
+                            <div class="benefit-icon">✓</div>
+                            <span class="text-gray-700" data-translate="all-premium-stories">All Premium Stories</span>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">✓</div>
+                            <span class="text-gray-700" data-translate="offline-reading">Offline Reading</span>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">✓</div>
+                            <span class="text-gray-700" data-translate="audio-narration">Audio Narration</span>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">✓</div>
+                            <span class="text-gray-700" data-translate="all-future-updates">All Future Updates</span>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">✓</div>
+                            <span class="text-gray-700" data-translate="family-sharing">Family Sharing</span>
+                        </div>
+                    </div>
+                    <button onclick="showParentalGate('lifetime')" class="w-full py-3 bg-purple-600 text-white rounded-lg font-bold hover:bg-purple-700 transition-colors">
+                        <span data-translate="choose-lifetime">Choose Lifetime</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Benefits Section -->
+    <section class="py-12">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 gradient-text" data-translate="why-premium">
+                Why Go Premium?
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="text-center">
+                    <div class="feature-icon">📚</div>
+                    <h3 class="text-xl font-bold mb-3" data-translate="exclusive-stories">Exclusive Stories</h3>
+                    <p class="text-gray-300" data-translate="exclusive-desc">Access our complete library of premium adventures</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="feature-icon">🎵</div>
+                    <h3 class="text-xl font-bold mb-3" data-translate="audio-books">Audio Books</h3>
+                    <p class="text-gray-300" data-translate="audio-desc">Professional narration with text highlighting</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="feature-icon">🌙</div>
+                    <h3 class="text-xl font-bold mb-3" data-translate="offline-access">Offline Access</h3>
+                    <p class="text-gray-300" data-translate="offline-desc">Download stories for bedtime without internet</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="feature-icon">🎨</div>
+                    <h3 class="text-xl font-bold mb-3" data-translate="enhanced-experience">Enhanced Experience</h3>
+                    <p class="text-gray-300" data-translate="enhanced-desc">Interactive elements and beautiful illustrations</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Parental Gate Modal -->
+    <div id="parental-gate-modal" class="fixed inset-0 modal-overlay hidden flex items-center justify-center z-50">
+        <div class="parental-gate">
+            <h3 class="text-2xl font-bold mb-4 gradient-text" data-translate="parental-gate-title">
+                Parental Verification
+            </h3>
+            <p class="mb-6" data-translate="parental-gate-desc">
+                Please solve this simple math problem to continue with purchase
+            </p>
+            
+            <div class="math-question" id="math-question">
+                <!-- Math question will be generated here -->
+            </div>
+            
+            <input type="number" id="math-answer" class="math-input mb-6" placeholder="?">
+            
+            <div class="flex gap-3">
+                <button onclick="closeParentalGate()" class="flex-1 py-3 border border-gray-400 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors">
+                    <span data-translate="cancel">Cancel</span>
+                </button>
+                <button onclick="verifyParentalGate()" class="flex-1 py-3 bg-yellow-400 text-black rounded-lg font-bold hover:bg-yellow-300 transition-colors">
+                    <span data-translate="verify">Verify</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Success Modal -->
+    <div id="success-modal" class="fixed inset-0 modal-overlay hidden flex items-center justify-center z-50">
+        <div class="parental-gate">
+            <div class="text-6xl mb-4">🎉</div>
+            <h3 class="text-2xl font-bold mb-4 gradient-text" data-translate="success-title">
+                Welcome to Premium!
+            </h3>
+            <p class="mb-6" data-translate="success-desc">
+                You now have access to all our premium stories and features.
+            </p>
+            <button onclick="closeSuccessModal()" class="w-full py-3 bg-yellow-400 text-black rounded-lg font-bold hover:bg-yellow-300 transition-colors">
+                <span data-translate="start-reading">Start Reading</span>
+            </button>
+        </div>
+    </div>
+    
+    <script src="main.js"></script>
+    <script>
+        // Premium page specific functionality
+        let selectedPlan = '';
+        let mathAnswer = 0;
+        
+        // Additional translations for premium page
+        const premiumTranslations = {
+            'back-to-library': {
+                en: 'Back to Library',
+                ar: 'العودة إلى المكتبة'
+            },
+            'premium-stories': {
+                en: 'Premium Stories',
+                ar: 'القصص المميزة'
+            },
+            'premium-subtitle': {
+                en: 'Unlock magical adventures and exclusive content',
+                ar: 'افتح المغامرات السحرية والمحتوى الحصري'
+            },
+            'featured-stories': {
+                en: 'Featured Premium Stories',
+                ar: 'القصص المميزة المختارة'
+            },
+            'choose-plan': {
+                en: 'Choose Your Plan',
+                ar: 'اختر خطتك'
+            },
+            'monthly-plan': {
+                en: 'Monthly',
+                ar: 'شهري'
+            },
+            'per-month': {
+                en: 'per month',
+                ar: 'في الشهر'
+            },
+            'all-premium-stories': {
+                en: 'All Premium Stories',
+                ar: 'جميع القصص المميزة'
+            },
+            'offline-reading': {
+                en: 'Offline Reading',
+                ar: 'القراءة دون اتصال'
+            },
+            'audio-narration': {
+                en: 'Audio Narration',
+                ar: 'السرد الصوتي'
+            },
+            'new-stories-monthly': {
+                en: 'New Stories Monthly',
+                ar: 'قصص جديدة شهرياً'
+            },
+            'choose-monthly': {
+                en: 'Choose Monthly',
+                ar: 'اختر شهري'
+            },
+            'yearly-plan': {
+                en: 'Yearly',
+                ar: 'سنوي'
+            },
+            'per-year': {
+                en: 'per year',
+                ar: 'في السنة'
+            },
+            'save-17': {
+                en: 'Save 17%!',
+                ar: 'وفر 17%!'
+            },
+            'exclusive-content': {
+                en: 'Exclusive Content',
+                ar: 'محتوى حصري'
+            },
+            'priority-support': {
+                en: 'Priority Support',
+                ar: 'دعم أولوي'
+            },
+            'choose-yearly': {
+                en: 'Choose Yearly',
+                ar: 'اختر سنوي'
+            },
+            'lifetime-plan': {
+                en: 'Lifetime',
+                ar: 'مدى الحياة'
+            },
+            'one-time-payment': {
+                en: 'one-time payment',
+                ar: 'دفعة واحدة'
+            },
+            'all-future-updates': {
+                en: 'All Future Updates',
+                ar: 'جميع التحديثات المستقبلية'
+            },
+            'family-sharing': {
+                en: 'Family Sharing',
+                ar: 'مشاركة العائلة'
+            },
+            'choose-lifetime': {
+                en: 'Choose Lifetime',
+                ar: 'اختر مدى الحياة'
+            },
+            'why-premium': {
+                en: 'Why Go Premium?',
+                ar: 'لماذا البريميوم؟'
+            },
+            'exclusive-stories': {
+                en: 'Exclusive Stories',
+                ar: 'قصص حصريّة'
+            },
+            'exclusive-desc': {
+                en: 'Access our complete library of premium adventures',
+                ar: 'الوصول إلى مكتبتنا الكاملة من المغامرات المميزة'
+            },
+            'audio-books': {
+                en: 'Audio Books',
+                ar: 'كتب صوتية'
+            },
+            'audio-desc': {
+                en: 'Professional narration with text highlighting',
+                ar: 'السرد الاحترافي مع تمييز النص'
+            },
+            'offline-access': {
+                en: 'Offline Access',
+                ar: 'وصول دون اتصال'
+            },
+            'offline-desc': {
+                en: 'Download stories for bedtime without internet',
+                ar: 'تحميل القصص للنوم دون إنترنت'
+            },
+            'enhanced-experience': {
+                en: 'Enhanced Experience',
+                ar: 'تجربة محسّنة'
+            },
+            'enhanced-desc': {
+                en: 'Interactive elements and beautiful illustrations',
+                ar: 'عناصر تفاعلية ورسوم توضيحية جميلة'
+            },
+            'parental-gate-title': {
+                en: 'Parental Verification',
+                ar: 'التحقق من الوالدين'
+            },
+            'parental-gate-desc': {
+                en: 'Please solve this simple math problem to continue with purchase',
+                ar: 'يرجى حل مسألة الرياضيات البسيطة للمتابعة بالشراء'
+            },
+            'cancel': {
+                en: 'Cancel',
+                ar: 'إلغاء'
+            },
+            'verify': {
+                en: 'Verify',
+                ar: 'التحقق'
+            },
+            'success-title': {
+                en: 'Welcome to Premium!',
+                ar: 'مرحباً بك في البريميوم!'
+            },
+            'success-desc': {
+                en: 'You now have access to all our premium stories and features.',
+                ar: 'لديك الآن الوصول إلى جميع قصصنا المميزة وميزاتنا.'
+            },
+            'start-reading': {
+                en: 'Start Reading',
+                ar: 'ابدأ القراءة'
+            }
+        };
+        
+        // Merge with main translations
+        Object.assign(translations, premiumTranslations);
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePremiumCarousel();
+        });
+        
+        function initializePremiumCarousel() {
+            new Splide('#premium-carousel', {
+                type: 'loop',
+                perPage: 3,
+                perMove: 1,
+                gap: '2rem',
+                autoplay: true,
+                interval: 4000,
+                pauseOnHover: true,
+                breakpoints: {
+                    768: {
+                        perPage: 1,
+                    },
+                    1024: {
+                        perPage: 2,
+                    }
+                }
+            }).mount();
+        }
+        
+        function showParentalGate(plan) {
+            selectedPlan = plan;
+            
+            // Generate simple math question
+            const num1 = Math.floor(Math.random() * 10) + 1;
+            const num2 = Math.floor(Math.random() * 10) + 1;
+            const operations = ['+', '-'];
+            const operation = operations[Math.floor(Math.random() * operations.length)];
+            
+            if (operation === '+') {
+                mathAnswer = num1 + num2;
+                document.getElementById('math-question').textContent = `${num1} + ${num2} = ?`;
+            } else {
+                // Ensure positive result
+                const larger = Math.max(num1, num2);
+                const smaller = Math.min(num1, num2);
+                mathAnswer = larger - smaller;
+                document.getElementById('math-question').textContent = `${larger} - ${smaller} = ?`;
+            }
+            
+            // Show modal
+            document.getElementById('parental-gate-modal').classList.remove('hidden');
+            document.getElementById('math-answer').focus();
+            document.getElementById('math-answer').value = '';
+        }
+        
+        function closeParentalGate() {
+            document.getElementById('parental-gate-modal').classList.add('hidden');
+            selectedPlan = '';
+        }
+        
+        function verifyParentalGate() {
+            const userAnswer = parseInt(document.getElementById('math-answer').value);
+            
+            if (userAnswer === mathAnswer) {
+                // Successful verification
+                closeParentalGate();
+                showSuccessModal();
+                
+                // In a real app, this would process the actual purchase
+                console.log(`Processing ${selectedPlan} plan purchase...`);
+                
+                // Simulate purchase completion
+                setTimeout(() => {
+                    localStorage.setItem('isPremiumUser', 'true');
+                    localStorage.setItem('premiumPlan', selectedPlan);
+                }, 1000);
+            } else {
+                // Wrong answer
+                alert(currentLanguage === 'en' ? 'Incorrect answer. Please try again.' : 'إجابة غير صحيحة. حاول مرة أخرى.');
+                document.getElementById('math-answer').focus();
+            }
+        }
+        
+        function showSuccessModal() {
+            document.getElementById('success-modal').classList.remove('hidden');
+        }
+        
+        function closeSuccessModal() {
+            document.getElementById('success-modal').classList.add('hidden');
+            window.location.href = 'index.html';
+        }
+        
+        // Handle Enter key in math input
+        document.getElementById('math-answer').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                verifyParentalGate();
+            }
+        });
+        
+        // Check if user is already premium
+        if (localStorage.getItem('isPremiumUser') === 'true') {
+            // Show premium user message
+            const heroSection = document.querySelector('section');
+            const premiumMessage = document.createElement('div');
+            premiumMessage.className = 'bg-green-600 text-white p-4 rounded-lg mb-6 text-center';
+            premiumMessage.innerHTML = currentLanguage === 'en' ? 
+                '🎉 You are already a Premium member! Enjoy unlimited access to all stories.' :
+                '🎉 أنت بالفعل عضو مميز! استمتع بوصول غير محدود إلى جميع القصص.';
+            heroSection.appendChild(premiumMessage);
+        }
+    </script>
+</body>
+</html>

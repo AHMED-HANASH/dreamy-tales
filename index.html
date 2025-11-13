@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-translate="app-title">Dreamy Tales - Magical Bedtime Stories</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+    <script src="https://unpkg.com/splitting@1.0.6/dist/splitting.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/splitting@1.0.6/dist/splitting.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700&family=Fredoka+One:wght@400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --deep-night: #1a1a2e;
+            --soft-lavender: #9b88b4;
+            --warm-gold: #f4d03f;
+            --cream-white: #fef9e7;
+            --gentle-pink: #f8c8dc;
+            --sage-green: #a8c090;
+            --soft-orange: #ffb366;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--deep-night) 0%, #2d1b69 50%, var(--soft-lavender) 100%);
+            min-height: 100vh;
+            color: var(--cream-white);
+        }
+        
+        .arabic-text {
+            font-family: 'Amiri', serif;
+        }
+        
+        .english-display {
+            font-family: 'Fredoka One', cursive;
+        }
+        
+        .hero-section {
+            background: linear-gradient(rgba(26, 26, 46, 0.7), rgba(45, 27, 105, 0.7)), url('resources/hero-bedtime.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        
+        .story-card {
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            background: rgba(254, 249, 231, 0.95);
+        }
+        
+        .story-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(155, 136, 180, 0.3);
+        }
+        
+        .filter-btn {
+            transition: all 0.3s ease;
+            background: rgba(155, 136, 180, 0.2);
+            border: 2px solid transparent;
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--warm-gold);
+            color: var(--deep-night);
+            border-color: var(--warm-gold);
+            transform: translateY(-2px);
+        }
+        
+        .search-input {
+            background: rgba(254, 249, 231, 0.9);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(155, 136, 180, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            border-color: var(--warm-gold);
+            box-shadow: 0 0 20px rgba(244, 208, 63, 0.3);
+        }
+        
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(45deg, var(--warm-gold), var(--soft-lavender));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .glow-effect {
+            box-shadow: 0 0 20px rgba(244, 208, 63, 0.4);
+        }
+        
+        .reading-streak {
+            background: linear-gradient(135deg, var(--warm-gold), var(--soft-orange));
+            color: var(--deep-night);
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .rtl {
+            direction: rtl;
+        }
+        
+        .rtl .story-card {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Particles Background -->
+    <div id="particles-container" class="floating-particles"></div>
+    
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 bg-black bg-opacity-30 backdrop-blur-md">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <h1 class="text-2xl font-bold gradient-text english-display" data-translate="app-title">Dreamy Tales</h1>
+                    <div class="reading-streak px-3 py-1 rounded-full text-sm font-bold">
+                        <span id="reading-streak">0</span> <span data-translate="reading-streak-text">Day Streak</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="language-toggle" class="px-4 py-2 bg-yellow-400 text-black rounded-lg font-medium hover:bg-yellow-300 transition-colors">
+                        العربية
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="hero-section min-h-screen flex items-center justify-center pt-20">
+        <div class="container mx-auto px-4 text-center">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-5xl md:text-7xl font-bold mb-6 gradient-text hero-title english-display">
+                    Welcome to Dreamy Tales
+                </h2>
+                <p class="text-xl md:text-2xl mb-8 opacity-90" data-translate="hero-subtitle">
+                    Magical bedtime stories in Arabic and English
+                </p>
+                <div class="flex flex-col md:flex-row gap-4 justify-center items-center">
+                    <button onclick="scrollToStories()" class="px-8 py-4 bg-yellow-400 text-black rounded-full font-bold text-lg hover:bg-yellow-300 transform hover:scale-105 transition-all glow-effect">
+                        <span data-translate="explore-stories">Explore Stories</span>
+                    </button>
+                    <button onclick="window.location.href='premium.html'" class="px-8 py-4 border-2 border-yellow-400 text-yellow-400 rounded-full font-bold text-lg hover:bg-yellow-400 hover:text-black transition-all">
+                        <span data-translate="premium-access">Premium Stories</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Story Library Section -->
+    <section id="story-library" class="py-20">
+        <div class="container mx-auto px-4">
+            <!-- Search and Filters -->
+            <div class="mb-12">
+                <div class="max-w-md mx-auto mb-8">
+                    <input 
+                        type="text" 
+                        id="story-search" 
+                        class="search-input w-full px-6 py-4 rounded-full text-gray-800 placeholder-gray-500 outline-none"
+                        placeholder="Search stories..."
+                        data-translate="search-placeholder"
+                    >
+                </div>
+                
+                <!-- Filter Buttons -->
+                <div class="flex flex-wrap justify-center gap-3 mb-8">
+                    <button class="filter-btn px-6 py-3 rounded-full font-medium active" data-filter="type" data-value="all">
+                        <span data-translate="filter-all">All Stories</span>
+                    </button>
+                    <button class="filter-btn px-6 py-3 rounded-full font-medium" data-filter="type" data-value="free">
+                        <span data-translate="filter-free">Free</span>
+                    </button>
+                    <button class="filter-btn px-6 py-3 rounded-full font-medium" data-filter="type" data-value="premium">
+                        <span data-translate="filter-premium">Premium</span>
+                    </button>
+                    <button class="filter-btn px-6 py-3 rounded-full font-medium" data-filter="category" data-value="classic">
+                        <span data-translate="filter-classic">Classic</span>
+                    </button>
+                    <button class="filter-btn px-6 py-3 rounded-full font-medium" data-filter="category" data-value="moral">
+                        <span data-translate="filter-moral">Moral</span>
+                    </button>
+                    <button class="filter-btn px-6 py-3 rounded-full font-medium" data-filter="category" data-value="adventure">
+                        <span data-translate="filter-adventure">Adventure</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Story Grid -->
+            <div id="story-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Stories will be dynamically loaded here -->
+            </div>
+            
+            <!-- No Results Message -->
+            <div id="no-results" class="hidden text-center py-12">
+                <div class="text-6xl mb-4">📚</div>
+                <h3 class="text-2xl font-bold mb-2" data-translate="no-stories-found">No stories found</h3>
+                <p class="text-gray-400" data-translate="try-different-search">Try adjusting your search or filters</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="py-20 bg-black bg-opacity-20">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-12 gradient-text english-display" data-translate="app-features">
+                Amazing Features
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center p-6 rounded-xl bg-white bg-opacity-10 backdrop-blur-md floating">
+                    <div class="text-5xl mb-4">🌙</div>
+                    <h3 class="text-xl font-bold mb-3" data-translate="bilingual-stories">Bilingual Stories</h3>
+                    <p class="text-gray-300" data-translate="bilingual-desc">Read in Arabic and English with side-by-side text</p>
+                </div>
+                <div class="text-center p-6 rounded-xl bg-white bg-opacity-10 backdrop-blur-md floating" style="animation-delay: 1s;">
+                    <div class="text-5xl mb-4">⭐</div>
+                    <h3 class="text-xl font-bold mb-3" data-translate="interactive-reading">Interactive Reading</h3>
+                    <p class="text-gray-300" data-translate="interactive-desc">Audio narration with text highlighting</p>
+                </div>
+                <div class="text-center p-6 rounded-xl bg-white bg-opacity-10 backdrop-blur-md floating" style="animation-delay: 2s;">
+                    <div class="text-5xl mb-4">🏆</div>
+                    <h3 class="text-xl font-bold mb-3" data-translate="reading-rewards">Reading Rewards</h3>
+                    <p class="text-gray-300" data-translate="rewards-desc">Track progress and earn badges</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="py-12 bg-black bg-opacity-40">
+        <div class="container mx-auto px-4 text-center">
+            <div class="mb-6">
+                <h3 class="text-2xl font-bold gradient-text english-display mb-2" data-translate="app-title">Dreamy Tales</h3>
+                <p class="text-gray-300" data-translate="footer-desc">Creating magical bedtime moments for children worldwide</p>
+            </div>
+            <div class="text-sm text-gray-400">
+                <span data-translate="copyright">© 2024 Dreamy Tales. All rights reserved.</span>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="main.js"></script>
+    <script>
+        // Additional translations for this page
+        const pageTranslations = {
+            'explore-stories': {
+                en: 'Explore Stories',
+                ar: 'استكشف القصص'
+            },
+            'premium-access': {
+                en: 'Premium Stories',
+                ar: 'القصص المميزة'
+            },
+            'no-stories-found': {
+                en: 'No stories found',
+                ar: 'لم يتم العثور على قصص'
+            },
+            'try-different-search': {
+                en: 'Try adjusting your search or filters',
+                ar: 'حاول تعديل بحثك أو عوامل التصفية'
+            },
+            'app-features': {
+                en: 'Amazing Features',
+                ar: 'ميزات رائعة'
+            },
+            'bilingual-stories': {
+                en: 'Bilingual Stories',
+                ar: 'قصص ثنائية اللغة'
+            },
+            'bilingual-desc': {
+                en: 'Read in Arabic and English with side-by-side text',
+                ar: 'اقرأ بالعربية والإنجليزية مع النص جنباً إلى جنب'
+            },
+            'interactive-reading': {
+                en: 'Interactive Reading',
+                ar: 'قراءة تفاعلية'
+            },
+            'interactive-desc': {
+                en: 'Audio narration with text highlighting',
+                ar: 'السرد الصوتي مع تمييز النص'
+            },
+            'reading-rewards': {
+                en: 'Reading Rewards',
+                ar: 'مكافآت القراءة'
+            },
+            'rewards-desc': {
+                en: 'Track progress and earn badges',
+                ar: 'تتبع التقدم واكسب الشارات'
+            },
+            'footer-desc': {
+                en: 'Creating magical bedtime moments for children worldwide',
+                ar: 'خلق لحظات سحرية للنوم للأطفال في جميع أنحاء العالم'
+            },
+            'copyright': {
+                en: '© 2024 Dreamy Tales. All rights reserved.',
+                ar: '© 2024 قصص الأحلام. جميع الحقوق محفوظة.'
+            },
+            'filter-classic': {
+                en: 'Classic',
+                ar: 'كلاسيكي'
+            },
+            'filter-moral': {
+                en: 'Moral',
+                ar: 'أخلاقي'
+            },
+            'filter-adventure': {
+                en: 'Adventure',
+                ar: 'مغامرة'
+            }
+        };
+        
+        // Merge with main translations
+        Object.assign(translations, pageTranslations);
+        
+        // Smooth scroll to stories
+        function scrollToStories() {
+            document.getElementById('story-library').scrollIntoView({ 
+                behavior: 'smooth' 
+            });
+        }
+        
+        // Initialize filters
+        function initializeFilters() {
+            // Set default filter
+            document.querySelector('[data-filter="type"][data-value="all"]').classList.add('active');
+        }
+        
+        // Update no results message
+        function updateNoResults() {
+            const grid = document.getElementById('story-grid');
+            const noResults = document.getElementById('no-results');
+            
+            if (grid.children.length === 0) {
+                noResults.classList.remove('hidden');
+            } else {
+                noResults.classList.add('hidden');
+            }
+        }
+        
+        // Override renderStoryGrid to include no results check
+        const originalRenderStoryGrid = window.renderStoryGrid;
+        window.renderStoryGrid = function() {
+            originalRenderStoryGrid();
+            updateNoResults();
+        };
+    </script>
+</body>
+</html>
